@@ -13,6 +13,7 @@ class MovieDetailsPage extends Component {
     popularity: null,
     poster_path: 0,
     release_date: null,
+    back: {},
   };
   async componentDidMount() {
     const { movieId } = this.props.match.params;
@@ -20,10 +21,19 @@ class MovieDetailsPage extends Component {
       `https://api.themoviedb.org/3/movie/${movieId}?api_key=f579fcbbcf5d2ce91ce8a1bd692fe85b&language=en-US`
     );
     console.log(response.data);
-    this.setState({ ...response.data });
+    this.setState({ ...response.data, back: this.props.location.state });
   }
   HandleGoBack = () => {
-    this.props.history.push("/");
+    const { history } = this.props;
+    if (this.state.back?.from) {
+      history.push({
+        pathname: this.state.back.from,
+        search: `query=${this.state.back.search}`,
+        state: { search: this.state.back.search },
+      });
+      return;
+    }
+    history.push("/");
   };
   render() {
     return (
